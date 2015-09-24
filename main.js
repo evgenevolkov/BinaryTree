@@ -2,15 +2,47 @@
  * Created by Jenya on 24.09.15.
  */
 
-function getTreeValue (tree) {
-    var treeValue=[];
-    treeValue.push(tree.value);
-    if (tree.isLeaf()) {
-        return treeValue }
-    if (tree.left) {treeValue.push(getTreeValue(tree.left))}
-    if (tree.right) {treeValue.push(getTreeValue(tree.right))}
+function getLeveledTreeValue (tree) {
+    var treeValue = [];
+    function getTreeValue(tree, branchLevel) {
+
+        //branchLevel=branchLevel;
+        if (!treeValue[branchLevel]) {
+            treeValue[branchLevel] = [];
+        }
+
+        treeValue[branchLevel].push(tree.value);
+        if (tree.isLeaf()) {
+            return treeValue
+        }
+        if (tree.left) {
+            branchLevel += 1;
+            if (!treeValue[branchLevel]) {
+                treeValue[branchLevel] = [];
+            }
+            getTreeValue(tree.left, branchLevel)
+        }
+        if (tree.right) {
+            if (!(tree.left)) {
+                branchLevel += 1;
+                if (!treeValue[branchLevel]) {
+                    treeValue[branchLevel] = [];
+                }
+            }
+            getTreeValue(tree.right, branchLevel)
+        }
+    }
+    getTreeValue(tree,0);
     return treeValue;
+
 }
+
+outputTreeValuesByLevel = function (treeValues) {
+    for (i=0, y=treeValues.length; i<y; i++){
+        console.log ("Tree value(s) at level " + i +
+            "is(are): " + treeValues[i] )
+    }
+};
 
 sampleTree = {
     left: {
@@ -18,10 +50,10 @@ sampleTree = {
         right: {
             left: null,
             right: null,
-            value: 2,
+            value: 3,
             isLeaf: function(){return true}
         },
-        value: 4,
+        value: 5,
         isLeaf: function(){return false}
     },
     right: {
@@ -29,14 +61,15 @@ sampleTree = {
         right: {
             left: null,
             right: null,
-            value: 4,
+            value: 1,
             isLeaf: function(){return true}
         },
         value: 4,
         isLeaf: function(){return false}
     },
-    value: 4,
+    value: 8,
     isLeaf: function(){return false}
 };
 
-console.log("sampleTree is:" + getTreeValue(sampleTree));
+outputTreeValuesByLevel(getLeveledTreeValue(sampleTree));
+
